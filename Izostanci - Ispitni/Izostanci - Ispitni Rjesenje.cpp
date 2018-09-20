@@ -17,7 +17,7 @@ struct Datum {
 	void Ispis() {
 		if (_dan == nullptr || _mjesec == nullptr || _godina == nullptr)
 			return;
-		cout << *_dan << "/" << *_mjesec << "/" << *_godina << endl; 
+		cout << *_dan << "/" << *_mjesec << "/" << *_godina << endl;
 	}
 	void Dealociraj() {
 		if (_dan != nullptr)
@@ -44,7 +44,7 @@ struct Izostanak {
 	int _brojSati;
 	bool _opravdano;//pravdanje zahtijeva da se evidentira i razlog izostanka	
 	void Unos(Datum datumIzostanka, int brojSati) {
-		if (datumIzostanka._dan == nullptr || datumIzostanka._mjesec == nullptr || datumIzostanka._godina == nullptr || brojSati<=0)
+		if (datumIzostanka._dan == nullptr || datumIzostanka._mjesec == nullptr || datumIzostanka._godina == nullptr || brojSati <= 0)
 			return;
 		_datumIzostanka.Unos(*datumIzostanka._dan, *datumIzostanka._mjesec, *datumIzostanka._godina);
 		_brojSati = brojSati;
@@ -83,12 +83,12 @@ struct Student {
 	char * _imePrezime;
 	Izostanak * _izostanci;
 	int _brojIzostanaka;
-	void Unos(char *indeks,const char *imePrezime=nullptr) {
+	void Unos(char *indeks, const char *imePrezime = nullptr) {
 		if (indeks == nullptr || imePrezime == nullptr)
 			return;
-		if (strlen(indeks) > 9) 
+		if (strlen(indeks) > 9)
 			return;
-		
+
 		_imePrezime = new char[strlen(imePrezime) + 1];
 		strcpy_s(_imePrezime, strlen(imePrezime) + 1, imePrezime);
 		strcpy_s(_brojIndeksa, 9, indeks);
@@ -109,7 +109,7 @@ struct Student {
 	void DodajIzostanak(Izostanak iz) {
 		if (_brojIzostanaka > 0 && _izostanci != nullptr) {
 			for (int i = 0; i < _brojIzostanaka; i++)
-				if (compareDate(_izostanci[i]._datumIzostanka, iz._datumIzostanka)==0) {
+				if (compareDate(_izostanci[i]._datumIzostanka, iz._datumIzostanka) == 0) {
 					_izostanci[i]._brojSati += iz._brojSati;
 					return;
 				}
@@ -124,12 +124,13 @@ struct Student {
 			_izostanci = new Izostanak[_brojIzostanaka + 1];
 		_izostanci[_brojIzostanaka++].Unos(iz._datumIzostanka, iz._brojSati);
 		if (iz._razlogIzostanka != nullptr)
-			_izostanci[_brojIzostanaka-1].Opravdaj(iz._razlogIzostanka);
+			_izostanci[_brojIzostanaka - 1].Opravdaj(iz._razlogIzostanka);
 	}
 	void Ispis() {
-		cout <<crt<< "--STUDENT INFO--" << crt;
-		if (_imePrezime == nullptr || _brojIndeksa[0]!='I')
+		if (_imePrezime == nullptr || _brojIndeksa[0] != 'I')
 			return;
+		
+		cout << crt << "--STUDENT INFO--" << crt;
 		cout << "Ime i prezime: " << _imePrezime << endl;
 		cout << "Broj indeksa: " << _brojIndeksa << endl;
 		cout << "Broj izostanaka: " << _brojIzostanaka << endl;
@@ -140,11 +141,37 @@ struct Student {
 			for (int i = 0; i < _brojIzostanaka; i++)
 				_izostanci[i].Ispis();
 		cout << crt;
+		char *nazivFajla = new char[strlen(_brojIndeksa) + 5];
+		strcpy_s(nazivFajla, strlen(_brojIndeksa) + 5, _brojIndeksa);
+		strcat_s(nazivFajla, strlen(_brojIndeksa) + 5, ".txt");
+		ofstream upis(nazivFajla);
+		if (!upis.fail()) {
+			upis<< crt << "--STUDENT INFO--" << crt;
+			upis << "Ime i prezime: " << _imePrezime << endl;
+			upis << "Broj indeksa: " << _brojIndeksa << endl;
+			upis << "Broj izostanaka: " << _brojIzostanaka << endl;
+			upis << "--LISTA IZOSTANAKA--" << crt;
+			if (_brojIzostanaka <= 0 || _izostanci == nullptr)
+				upis << "Nema izostanaka..\n";
+			else
+				for (int i = 0; i < _brojIzostanaka; i++) {
+					upis << "Datum izostanka: " << *_izostanci[i]._datumIzostanka._dan << "/" << *_izostanci[i]._datumIzostanka._mjesec << "/" << *_izostanci[i]._datumIzostanka._godina << endl;
+					upis << "\nBroj sati: " << _izostanci[i]._brojSati << endl;
+					if (_izostanci[i]._razlogIzostanka != nullptr)
+						upis << _izostanci[i]._razlogIzostanka << "\nOPRAVDANO\n";
+					else
+						upis << "NEOPRAVDANO\n";
+				}
+			upis << crt;
+			cout << "Uspjesno spaseni podaci u fajl " << nazivFajla << endl;
+			upis.close();
+		}
+		else cout << "Greska pri otvaranju fajla..\n";
 	}
 	Izostanak *BinarnaPretraga(Datum d) {
 		if (_brojIzostanaka <= 0 || _izostanci == nullptr)
 			return nullptr;
-		for (int i = 0; i < _brojIzostanaka-1; i++)
+		for (int i = 0; i < _brojIzostanaka - 1; i++)
 			if (compareDate(_izostanci[i]._datumIzostanka, _izostanci[i + 1]._datumIzostanka) == -1)
 				swap(_izostanci[i], _izostanci[i + 1]);
 		int prvi = 0, zadnji = _brojIzostanaka, srednji;
@@ -160,7 +187,7 @@ struct Student {
 		else return nullptr;
 	}
 
-	
+
 };
 char *GenerisiSljedeciBrojIndeksa() {
 	indeks += 1;
@@ -170,7 +197,7 @@ char *GenerisiSljedeciBrojIndeksa() {
 		temp /= 10;
 		brc++;
 	}
-	if (brc!=6)
+	if (brc != 6)
 		return nullptr;
 	temp = indeks;
 	char *indekss = new char[9];
@@ -179,12 +206,12 @@ char *GenerisiSljedeciBrojIndeksa() {
 	char *indeksss = new char[9];
 	indeksss[0] = 'I', indeksss[1] = 'B';
 	for (int i = 2; i < 8; i++)
-		indeksss[i] = indekss[i-2];
+		indeksss[i] = indekss[i - 2];
 	indeksss[8] = '\0';
 
 	return indeksss;
 }
-Izostanak *PronadjiNajveciNeopravdaniIzostanak(Student st,int i=1,Izostanak *p=nullptr) {
+Izostanak *PronadjiNajveciNeopravdaniIzostanak(Student st, int i = 1, Izostanak *p = nullptr) {
 	if (st._brojIzostanaka <= 0 || st._izostanci == nullptr)
 		return nullptr;
 	if (i == st._brojIzostanaka)
@@ -235,7 +262,7 @@ void main() {
 	cout << "Rekurzivno pronadjen najveci neopravdani izostanak -> ";
 	p2->Ispis();
 	cout << endl;
-	
+
 	jucer.Dealociraj();
 	prije5Dana.Dealociraj();
 	prije10Dana.Dealociraj();
